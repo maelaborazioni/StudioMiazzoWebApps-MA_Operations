@@ -1,0 +1,8 @@
+foreignDataSource:"db:/ma_anagrafiche/ditte",
+items:[
+{foreignColumnName:"idditta",primaryDataProviderID:"op_ditta_converted",typeid:23,uuid:"79D24A0E-6164-4202-9E29-F78739AD3814"}
+],
+name:"operationlog_to_ditte",
+primaryDataSource:"db:/ma_log/operationlog",
+typeid:22,
+uuid:"F8F5243E-33E2-4AD5-89E2-61D7E03DFC51"

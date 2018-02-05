@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:false,
+foreignDataSource:"db:/ma_log/operationtype",
+items:[
+{foreignColumnName:"idtipooperazione",operator:0,primaryDataProviderID:"op_type",typeid:23,uuid:"CBAD6456-E4A4-446B-97E5-64208E713394"}
+],
+joinType:0,
+name:"operationlog_to_operationtype",
+primaryDataSource:"db:/ma_log/operationlog",
+typeid:22,
+uuid:"BD4EAD86-7542-4CED-9F6C-4DE19F61E117"

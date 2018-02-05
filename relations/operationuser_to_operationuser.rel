@@ -1,0 +1,7 @@
+allowCreationRelatedRecords:false,
+foreignDataSource:"db:/ma_log/operationuser",
+joinType:0,
+name:"operationuser_to_operationuser",
+primaryDataSource:"db:/ma_log/operationuser",
+typeid:22,
+uuid:"8D1BE0E5-0C89-4C31-A935-4549C7AA4218"

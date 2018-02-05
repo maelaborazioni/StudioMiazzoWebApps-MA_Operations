@@ -1,0 +1,12 @@
+allowCreationRelatedRecords:true,
+allowParentDeleteWhenHavingRelatedRecords:true,
+deleteRelatedRecords:true,
+foreignDataSource:"db:/ma_log/filelog",
+items:[
+{foreignColumnName:"file_id",operator:0,primaryDataProviderID:"file_id",typeid:23,uuid:"788C6809-FD13-41F4-B26F-013E8433833F"}
+],
+joinType:0,
+name:"operationfile_to_filelog",
+primaryDataSource:"db:/ma_log/operationfile",
+typeid:22,
+uuid:"24F89CE6-B639-4BF4-8748-18469CB7515B"

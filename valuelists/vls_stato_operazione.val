@@ -1,0 +1,14 @@
+addEmptyValue:0,
+customValues:"In corso|0
+Completata|1
+Errore|-1
+Warning|255",
+dataProviderID1:null,
+dataSource:null,
+name:"vls_stato_operazione",
+relationName:null,
+returnDataProviders:0,
+showDataProviders:1,
+typeid:34,
+uuid:"044C2749-F8D4-4183-9FB7-E70483EE6677",
+valueListType:0

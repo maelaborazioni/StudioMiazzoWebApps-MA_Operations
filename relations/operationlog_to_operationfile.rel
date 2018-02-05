@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+deleteRelatedRecords:true,
+foreignDataSource:"db:/ma_log/operationfile",
+items:[
+{foreignColumnName:"op_id",operator:0,primaryDataProviderID:"op_id",typeid:23,uuid:"9EFBEB16-6850-43C5-A564-4E78E154E53D"}
+],
+name:"operationlog_to_operationfile",
+primaryDataSource:"db:/ma_log/operationlog",
+typeid:22,
+uuid:"4936FB7D-74E8-4F37-822F-70046ECDED1F"

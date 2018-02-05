@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:false,
+foreignDataSource:"db:/ma_log/operationuser",
+items:[
+{foreignColumnName:"user_id",operator:0,primaryDataProviderID:"globals.svy_sec_username",typeid:23,uuid:"770C46F5-D6EB-4874-9188-09CD7C77EBE9"}
+],
+joinType:0,
+name:"_to_operationusers",
+primaryDataSource:"db:/svy_framework/sec_user",
+typeid:22,
+uuid:"DB0B46F6-1348-43D7-96D0-C2827BE68788"

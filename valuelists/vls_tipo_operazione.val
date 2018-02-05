@@ -1,0 +1,10 @@
+dataProviderID1:"descrizione",
+dataProviderID2:"idtipooperazione",
+dataSource:"db:/ma_log/operationtype",
+name:"vls_tipo_operazione",
+returnDataProviders:2,
+showDataProviders:1,
+sortOptions:"descrizione asc",
+typeid:34,
+uuid:"F2B94ADA-B9AF-48E1-AB62-4FAB60F849BD",
+valueListType:1
