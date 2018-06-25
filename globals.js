@@ -32,6 +32,7 @@ var OpType =
 	SSF: 'SSF',
 	SST: 'SST',
 	SNL: 'SNL',
+	SET: 'SET',
 	EDR: 'EDR',
 	EDA: 'EDA',
 	EWEA:'EWEA',
