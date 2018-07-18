@@ -218,13 +218,13 @@ function updateOperationStatus(operationId)
  */
 function checkStatusCallback(retObj)
 {
-	if(!forms)
-	{
-		var msgError = 'Non è possibile verificare il progresso dell\'operazione a causa del verificarsi di un errore nella connessione con il server. \n';
-		    msgError += 'L\'operazione proseguirà comunque in background. Per visualizzarne lo stato, rieffettuare il login all\'applicazione ed aprire lo <b>Storico operazioni</b>';
-		globals.ma_utl_showErrorDialog(msgError);
-		return;
-	}
+//	if(!forms)
+//	{
+//		var msgError = 'Non è possibile verificare il progresso dell\'operazione a causa del verificarsi di un errore nella connessione con il server. \n';
+//		    msgError += 'L\'operazione proseguirà comunque in background. Per visualizzarne lo stato, rieffettuare il login all\'applicazione ed aprire lo <b>Storico operazioni</b>';
+//		globals.ma_utl_showErrorDialog(msgError);
+//		return;
+//	}
 	
 	var lblOpProgress = forms.mao_history_lite.elements.lbl_prog_fg;
 	var lblOpMsg = forms.mao_history_main_lite.elements.lbl_history_msg;

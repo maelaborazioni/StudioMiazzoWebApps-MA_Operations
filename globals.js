@@ -165,7 +165,7 @@ function asyncJsonWebServiceRequest(url, params, startJob, checkStatusFunction, 
 			case globals.HTTPStatusCode.CONFLICT:
 				var message = responseObj['message'] || 'È in corso un\'altra operazione sui dipendenti selezionati';
 			
-				/** @type {JSFoundset<db:/ma_anagrafiche/lavoratori>} */
+				/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>} */
 				var employeesFoundset = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.LAVORATORI);
 				if (employeesFoundset.find())
 				{
@@ -186,7 +186,7 @@ function asyncJsonWebServiceRequest(url, params, startJob, checkStatusFunction, 
 				if (unblock)
 				{
 					//gestione sblocco dipendenti
-					/** @type {JSFoundset<db:/ma_log/operationemployee>} */
+					/** @type {JSFoundSet<db:/ma_log/operationemployee>} */
 					var opEmployeesFs = databaseManager.getFoundSet(globals.Server.MA_LOG,'OperationEmployee');
 					if (opEmployeesFs.find())
 					{
@@ -426,8 +426,17 @@ function checkStatus(operationId, callback, delay, continueWithCallback)
 		}
 		
 		retObj = { status: operation, timeout: timeoutReached, hasProgress: hasProgress };
-		if(callback)
-			callback(retObj);
+		
+		// TODO aggiunto controllo su esistenza form che effettua le operazioni di aggiornamento
+		if(forms.mao_history)
+		   if(callback)
+			  callback(retObj);
+		else
+		{
+			var msgError = 'Non è possibile verificare il progresso dell\'operazione a causa del verificarsi di un errore nella connessione con il server. \n';
+			msgError += 'L\'operazione proseguirà comunque in background. Per visualizzarne lo stato, rieffettuare il login all\'applicazione ed aprire lo <b>Storico operazioni</b>';
+			globals.ma_utl_showErrorDialog(msgError);
+		}
 			
 		return retObj;
 	}
@@ -648,7 +657,7 @@ function startJobCallback(method, args, jobName, continuation, callback)
  */
 function startAsyncOperation(method, methodArgs, callback, delay, opType, opValues)
 {
-	/** @type {JSFoundset<db:/ma_log/operationuser>} */
+	/** @type {JSFoundSet<db:/ma_log/operationuser>} */
 	var operationUserFs = databaseManager.getFoundSet(globals.Server.MA_LOG, 'operationuser');
 	if(!operationUserFs)
 		return null;
@@ -716,7 +725,7 @@ function startAsyncOperation(method, methodArgs, callback, delay, opType, opValu
  */
 function startAsyncBackgroundOperation(solutionName, context, methodName, methodArgs, opType, callback, user, password)
 {
-	/** @type {JSFoundset<db:/ma_log/operationuser>} */
+	/** @type {JSFoundSet<db:/ma_log/operationuser>} */
 	var operationUserFs = databaseManager.getFoundSet(globals.Server.MA_LOG, 'operationuser');
 	if(!operationUserFs)
 		return null;
@@ -792,7 +801,7 @@ function asyncOperationDone(event, client)
  */
 function saveFile(operation, bytes, fileName, mimeType, uploadDate)
 {
-	/** @type {JSFoundset<db:/ma_log/filelog>} */
+	/** @type {JSFoundSet<db:/ma_log/filelog>} */
 	var fileFs = databaseManager.getFoundSet(globals.Server.MA_LOG, globals.Table.FILE_LOG);
 	if(!fileFs)
 		return false;

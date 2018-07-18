@@ -142,7 +142,7 @@ function onDataChangeDitta(oldValue, newValue, event) {
 	}
 		
 	
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte>} */
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte>} */
 	var dittaFs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE, 'ditte');
 	if(dittaFs.find())
 	{

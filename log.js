@@ -49,7 +49,7 @@ function apriStoricoOperazioniLite(periodo)
  */
 function GetNewOperation(opType, opValues)
 {
-	/** @type {JSFoundset<db:/ma_log/operationuser>} */
+	/** @type {JSFoundSet<db:/ma_log/operationuser>} */
 	var operationUserFs = databaseManager.getFoundSet(globals.Server.MA_LOG, 'operationuser');
 	if(!operationUserFs)
 		return null;
