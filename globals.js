@@ -427,16 +427,19 @@ function checkStatus(operationId, callback, delay, continueWithCallback)
 		
 		retObj = { status: operation, timeout: timeoutReached, hasProgress: hasProgress };
 		
-		// TODO aggiunto controllo su esistenza form che effettua le operazioni di aggiornamento
-		if(forms.mao_history)
-		   if(callback)
-			  callback(retObj);
-		else
+		// control added to understand why sometimes polling job on long operation stop working
+		if(!forms || !forms.mao_history_lite || !forms.mao_history_main_lite)
 		{
-			var msgError = 'Non è possibile verificare il progresso dell\'operazione a causa del verificarsi di un errore nella connessione con il server. \n';
-			msgError += 'L\'operazione proseguirà comunque in background. Per visualizzarne lo stato, rieffettuare il login all\'applicazione ed aprire lo <b>Storico operazioni</b>';
-			globals.ma_utl_showErrorDialog(msgError);
+			var msgError = 'Non è possibile seguire direttamente il progresso dell\'operazione a causa del verificarsi di un errore nella connessione con il server. \n';
+		    msgError += 'L\'operazione proseguirà comunque in background. Per visualizzarne lo stato, si consiglia id rieffettuare il login all\'applicazione ed aprire lo <b>Storico operazioni</b>';
+		
+			application.output(msgError,LOGGINGLEVEL.ERROR);   
+			    
+		    globals.ma_utl_showErrorDialog(msgError);
 		}
+		
+		if(callback)
+		   callback(retObj);
 			
 		return retObj;
 	}
@@ -444,7 +447,6 @@ function checkStatus(operationId, callback, delay, continueWithCallback)
 	{
 		application.output(ex.message, LOGGINGLEVEL.ERROR);
 		plugins.scheduler.removeJob(checkStatusJobName);
-		
 		return null;
 	}
 }
