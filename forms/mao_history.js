@@ -253,26 +253,24 @@ function checkStatusCallback(retObj)
 		if(retObj.status && retObj.hasProgress)
 			updateOperationStatus(retObj.status.op_id);
 				
+		lblOpProgress.setSize(Math.ceil(retObj.status.op_progress) * 4,20);
+		
 		switch(retObj.status.op_status)
 		{
 			case 0:
 				// running : l'operazione è ancora in corso
-			    lblOpProgress.setSize(Math.ceil(retObj.status.op_progress) * 4,20);
 				lblOpProgress.bgcolor = globals.Colors.ATTENDANT.background;
 				break;
 			case 1:
 				// success : l'operazione è terminata correttamente
-                lblOpProgress.setSize(Math.ceil(retObj.status.op_progress) * 4,20);
                 lblOpProgress.bgcolor = globals.Colors.ATTENDANT.background;
                 break;
 			case 255:
 				// warning : l'operazione è terminata ma c'è una notifica 
-			    lblOpProgress.setSize(Math.ceil(retObj.status.op_progress) * 4,20);
 			    lblOpProgress.bgcolor = globals.Colors.WARNING.background;
 			    break;
 			case -1:
 				// errore : l'operazione ha generato un errore 
-			    lblOpProgress.setSize(Math.ceil(retObj.status.op_progress) * 4,20);
 			    lblOpProgress.bgcolor = globals.Colors.SELECTED.background;
 			    lblOpMsg.visible = true;
 			    break;
