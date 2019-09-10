@@ -46,8 +46,8 @@ var OpType =
 	AmmCC : 'AmmCC',
 	AmmIU : 'AmmIU',
 	SRR : 'SRR',
-	ITCom : 'ITCom' // importazione tracciato ore commesse
-	
+	ITCom : 'ITCom', 
+	ITW   : 'ITW'    
 };
 
 /**

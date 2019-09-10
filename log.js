@@ -71,7 +71,8 @@ function GetNewOperation(opType, opValues)
 		newOperation.op_status = globals.OpStatus.ONGOING;
 		newOperation.op_type = globals.getOpType(opType);
 		newOperation.op_message = newOperation.operationlog_to_operationtype.descrizione;
-		
+		newOperation.op_hash =  utils.stringMD5HashBase64(newOperationUser.op_id);
+			
 	if(opValues)
 	{
 		for(var p in opValues)
