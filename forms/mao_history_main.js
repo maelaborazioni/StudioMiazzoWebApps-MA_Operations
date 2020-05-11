@@ -359,7 +359,7 @@ function onActionBtnRecupera(event)
 	
 	}
 	
-	var updateResp = plugins.rawSQL.executeSQL(globals.Server.MA_LOG,'OperationLog',sqlRecuperaOps,null);
+	var updateResp = plugins.rawSQL.executeSQL(globals.Server.MA_LOG,sqlRecuperaOps,null);
 	if(updateResp)
 	{
 		plugins.rawSQL.flushAllClientsCache(globals.Server.MA_LOG,'OperationLog');

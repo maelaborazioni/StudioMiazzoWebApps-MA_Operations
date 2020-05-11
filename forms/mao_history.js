@@ -219,10 +219,11 @@ function updateOperationStatus(operationId)
 function checkStatusCallback(retObj)
 {
 	// control added to understand why sometimes polling job on long operation stop working
-	if(!forms || !forms.mao_history_lite || !forms.mao_history_main_lite)
+	if(!forms || !solutionModel.getForm(forms.mao_history_lite.controller.getName()) || !solutionModel.getForm(forms.mao_history_main_lite.controller.getName())) 
+			//|| !forms.mao_history_lite || !forms.mao_history_main_lite)
 	{
 		var msgError = 'Non è possibile seguire direttamente il progresso dell\'operazione a causa del verificarsi di un errore nella connessione con il server. \n';
-		    msgError += 'L\'operazione proseguirà comunque in background. Per visualizzarne lo stato, si consiglia id rieffettuare il login all\'applicazione ed aprire lo <b>Storico operazioni</b>';
+		    msgError += 'L\'operazione proseguirà comunque in background. Per visualizzarne lo stato, si consiglia di rieffettuare il login all\'applicazione ed aprire lo <b>Storico operazioni</b>';
 		
 		application.output(msgError,LOGGINGLEVEL.ERROR);   
 		    
@@ -251,11 +252,11 @@ function checkStatusCallback(retObj)
 	else
 	{
 		if(retObj.status && retObj.hasProgress)
-			updateOperationStatus(retObj.status.op_id);
+			updateOperationStatus(retObj.status.operationId);
 				
-		lblOpProgress.setSize(Math.ceil(retObj.status.op_progress) * 4,20);
+		lblOpProgress.setSize(Math.ceil(retObj.status.progress) * 4,20);
 		
-		switch(retObj.status.op_status)
+		switch(retObj.status)
 		{
 			case 0:
 				// running : l'operazione è ancora in corso
@@ -280,12 +281,14 @@ function checkStatusCallback(retObj)
 }
 
 /** 
+ * @param {{statusCode : Number, returnValue: Object, message : String, operationId : String, operationHash : String, status : Number, start : Date, end : Date, progress : Number, lastProgress : Date}} retObj
+ * 
  * @properties={typeid:24,uuid:"A7816B7D-A77B-4B4C-A9DD-37535607C247"}
  */
 function operationDone(retObj)
 {
 	// Update the file foundset, to avoid stale data
-	var fs = updateOperationStatus(retObj.status.op_id);
+	var fs = updateOperationStatus(retObj.operationId);
 	if (fs)
 	{
 		databaseManager.refreshRecordFromDatabase(fs.operationlog_to_operationfile, 0);

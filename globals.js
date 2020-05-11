@@ -23,13 +23,51 @@ var OpStatus =
  */
 var OpType =
 {
+	CG : "CG",
+    CT : "CT",
+    CP : "CP",
+	CC : "CC",
+    AM : "AM",
+    CM : "CM",
+    IT : "IT",
+    ITE : "ITE",
+    ITW : "ITW",
+    ST : "ST",
+    IG : "IG",
+    SE : "SE",
+    ME : "ME",
+    EE : "EE",
+    SG : "SG",
+    SAD : "SAD",
+    SSD : "SSD",
+    SSI : "SSI",
+    SSE : "SSE",
+	SSO : "SSO",
+    SSEL : "SSEL",
+    SSF : "SSF",
+    SSV : "SSV",
+    SCP : "SCP",
+    SAT : "SAT",
+    SSR : "SSR",
+    SPA : "SPA",
+    SCCD : "SCCD",
+    RC : "RC",
+    RR : "RR",
+    RGR : "RGR",
+    RT : "RT",
+    RTD : "RTD",
+    RTG : "RTG",
+    RTDD : "RTDD",
+    AND : "AND",
+    CE : "CE",
+    MRTW : "MRTW",
+    MGTW : "MGTW",
 	CGC: 'CGC',
 	SDR: 'SDR',
 	SDA: 'SDA',
 	SDS: 'SDS',
 	SDP: 'SDP',
 	SCA: 'SCA',
-	SSF: 'SSF',
 	SST: 'SST',
 	EST: 'EST',
 	SNL: 'SNL',
@@ -46,8 +84,7 @@ var OpType =
 	AmmCC : 'AmmCC',
 	AmmIU : 'AmmIU',
 	SRR : 'SRR',
-	ITCom : 'ITCom', 
-	ITW   : 'ITW'    
+	ITCom : 'ITCom'  
 };
 
 /**
@@ -96,6 +133,8 @@ function addJsonWebServiceJob(url, params, checkStatusFunction, checkStatusInter
  * @param {Function} [continueWithCallback] the callback function to execute when the operation is done,
  * 					 either successfully or with errors. It is passed the whole row
  * 
+ * @return {{ReturnValue: Object, StatusCode: Number, Message: String, OperationId:String }}
+ * 
  * @AllowToRunInFind
  *
  * @properties={typeid:24,uuid:"645700B0-75E9-4A46-BFD4-D9552AF55A9E"}
@@ -143,6 +182,15 @@ function asyncJsonWebServiceRequest(url, params, startJob, checkStatusFunction, 
 		request.addHeader('Content-type','text/json');
 		break;
 	}
+	
+	// authorizing region
+	request.usePreemptiveAuthentication(true);
+	// verify expiration and, in case, refresh the owned token
+	var expAt = new Date(scopes.auth._expirationDate);
+	if(globals.dateDiff(new Date(),expAt,1000 * 60 * 60) < 5)
+	   scopes.auth.RefreshPSToken(scopes.auth._refreshToken);	
+	request.addHeader('Authorization','Bearer ' + scopes.auth._accessToken);
+		
 	request.setBodyContent(jsonParams);
 	
 	var response = request.executeRequest();
@@ -150,6 +198,7 @@ function asyncJsonWebServiceRequest(url, params, startJob, checkStatusFunction, 
 	{
 		var msg = '';
 		var jsonResponse = response.getResponseBody();
+		/** @type {{ReturnValue: Object, StatusCode: Number, Message: String, OperationId:String}} */
 		var responseObj = plugins.serialize.fromJSON(jsonResponse);
 		
 		switch (response.getStatusCode())
@@ -165,13 +214,13 @@ function asyncJsonWebServiceRequest(url, params, startJob, checkStatusFunction, 
 				
 			// Conflict
 			case globals.HTTPStatusCode.CONFLICT:
-				var message = responseObj['message'] || 'È in corso un\'altra operazione sui dipendenti selezionati';
+				var message = responseObj.Message || 'È in corso un\'altra operazione sui dipendenti selezionati';
 			
 				/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>} */
 				var employeesFoundset = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.LAVORATORI);
 				if (employeesFoundset.find())
 				{
-					employeesFoundset.idlavoratore = responseObj['blocked'];
+					employeesFoundset.idlavoratore = responseObj['Blocked'];
 					if(employeesFoundset.search() > 0)
 					{
 						message += '<p>';
@@ -192,7 +241,7 @@ function asyncJsonWebServiceRequest(url, params, startJob, checkStatusFunction, 
 					var opEmployeesFs = databaseManager.getFoundSet(globals.Server.MA_LOG,'OperationEmployee');
 					if (opEmployeesFs.find())
 					{
-						opEmployeesFs.dip_id = responseObj['blocked'];
+						opEmployeesFs.dip_id = responseObj['Blocked'];
 						if(opEmployeesFs.search() > 0)
 						{
 							databaseManager.startTransaction();
@@ -232,16 +281,14 @@ function asyncJsonWebServiceRequest(url, params, startJob, checkStatusFunction, 
 				break
 				
 			case globals.HTTPStatusCode.OK:
-				if (responseObj['returnValue'] == true)
+				if (responseObj.ReturnValue == true)
 				{	
 					if(startJob)
 					{
-						var op_id = responseObj['op_id'] || responseObj['operationId'];
-						
 						globals.callBackgroundJob
 						(
 							 checkStatus
-							,[op_id, checkStatusFunction, checkStatusInterval, continueWithCallback]
+							,[responseObj.OperationId, checkStatusFunction, checkStatusInterval, continueWithCallback]
 							,null
 							,true
 							,500
@@ -277,7 +324,7 @@ function asyncJsonWebServiceRequest(url, params, startJob, checkStatusFunction, 
 																	  // è stato necessario introdurre il nome Stampe altrimenti lo storico operazioni
 																	  // non veniva aperto a meno che fosse già aperta una scheda
 																	  globals.nav_program_name ? globals.nav_program_name : 'Stampe',
-								                                      op_id,
+								                                      responseObj.OperationId,
 																	  periodo,
 																	  gruppo_installazione,
 																	  gruppo_lavoratori,
@@ -333,7 +380,7 @@ function asyncJsonWebServiceRequest(url, params, startJob, checkStatusFunction, 
  * 						operation is done, wither succesfully or with error. It is
  * 						passed the whole row
  * 
- * @return {{ status: { op_id: String, op_hash: String, op_start: Date, op_end: Date, op_status: Number, op_progress: Number, op_message: String }, timeout: Boolean }}
+ * @return {{ status: {statusCode : Number, returnValue: Object, message : String, operationId : String, operationHash : String, status : Number, start : Date, end : Date, progress : Number, lastProgress : Date}, timeout: Boolean }}
  * 
  * @properties={typeid:24,uuid:"28EFCE8A-93B3-4E08-9755-FF64554F3742"}
  */
@@ -360,10 +407,14 @@ function checkStatus(operationId, callback, delay, continueWithCallback)
 			startDate.setMilliseconds(startDate.getMilliseconds() + delay);
 		
 		var operation = getOperationStatus(operationId);		
-		if (operation && operation.op_status === OpStatus.ONGOING)
+		if(!operation || !operation.returnValue)
+		   // error management
+		   throw new Error("Non è stato possibile recuperare lo stato dell\'operazione richiesta");
+		
+		if (operation && operation.status === OpStatus.ONGOING)
 		{
-			var lastProgress = operation.op_lastprogress;
-			var lastmessage = operation.op_message;
+			var lastProgress = new Date(operation.lastProgress);
+			var lastmessage = operation.message;
 			
 			hasProgress = lastProgress && lastProgress.getTime() > job.lastProgressTimeStamp;
 			
@@ -402,7 +453,7 @@ function checkStatus(operationId, callback, delay, continueWithCallback)
 					if(hasProgress)
 					{
 						job.lastProgressTimeStamp = currentTimeStamp.getTime();
-						job.lastProgress = operation.op_progress;
+						job.lastProgress = operation.progress;
 					}
 					
 					// Start a new checkStatus job
@@ -448,6 +499,7 @@ function checkStatus(operationId, callback, delay, continueWithCallback)
 	catch(ex)
 	{
 		application.output(ex.message, LOGGINGLEVEL.ERROR);
+		globals.ma_utl_showErrorDialog('Errore durante il recupero dello stato dell\'operazione');
 		plugins.scheduler.removeJob(checkStatusJobName);
 		return null;
 	}
@@ -458,7 +510,7 @@ function checkStatus(operationId, callback, delay, continueWithCallback)
  * 
  * @param {String} operationId
  * 
- * @return {{ op_id: String, op_hash: String, op_start: Date, op_end: Date, op_status: Number, op_progress: Number, op_message: String, op_lastprogress: Date }}
+ * @return {{statusCode : Number, returnValue: Object, message : String, operationId : String, operationHash : String, status : Number, start : Date, end : Date, progress : Number, lastProgress : Date}}
  * 
  * @private
  *
@@ -466,24 +518,10 @@ function checkStatus(operationId, callback, delay, continueWithCallback)
  */
 function getOperationStatus(operationId) {
 	
-	var url = WS_OP_URL + "/Operations/GetStatus/" + operationId;
-		
-	var client = globals.getHttpClient();
-	var request = client.createGetRequest(url);
-	
-	var response = request.executeRequest();
-	if (response)
-	{
-	    var jsonResponse = response.getResponseBody();
-	    /** @type {{ op_id: String, op_hash: String, op_start: Date, op_end: Date, op_status: Number, op_progress: Number, op_message: String, op_lastprogress: Date }} */
-		var responseObj = plugins.serialize.fromJSON(jsonResponse);
-			responseObj.op_start 		= globals.dateFormat(responseObj.op_start, globals.LOG_DATEFORMAT);
-			responseObj.op_lastprogress = globals.dateFormat(responseObj.op_lastprogress, globals.LOG_DATEFORMAT);
-
-		return responseObj;
-	}
-	
-	return null;
+	var url = WS_OPERATION + "/Operation/GetStatus";
+	var params = { OperationId : operationId };
+	var response = getWebServiceOperationResponse(url,params);
+	return response;
 }
 
 /**
@@ -492,7 +530,7 @@ function getOperationStatus(operationId) {
  * @param {Number} iddipendente
  * @param {Number} [periodo]
  * 
- * @return {{returnValue: Boolean, status: Number, message: String, op_id: String, client_id: String}} true if there are concurrent operations, false otherwise.
+ * @return {{ReturnValue: Boolean, Status: Number, Message: String, OperationId: String, UserId: String}} true if there are concurrent operations, false otherwise.
  * 			If false is returned, status = 0 means user's operations, status = 1 means other users' operations
  * 
  * @properties={typeid:24,uuid:"56BC1091-3E3A-4077-A165-24F186C820F6"}
@@ -501,8 +539,8 @@ function askForConcurrentOperations(userID, idditta, iddipendente, periodo)
 {
 	var hClient = globals.getHttpClient();
 	
-	var request = hClient.createPostRequest(WS_URL + '/Operations/CheckForConcurrentOperations');
-		request.addParameter('userID',userID.toString());
+	var request = hClient.createPostRequest(WS_OPERATION + '/Operations/CheckForConcurrentOperations');
+		request.addParameter('userid',userID.toString());
 		if(idditta)
 		   request.addParameter('idditta',idditta.toString());
 		if(iddipendente)
@@ -513,7 +551,7 @@ function askForConcurrentOperations(userID, idditta, iddipendente, periodo)
 	var response = request.executeRequest();
 	if(response)
 	{
-		/** @type {{returnValue: Boolean, status: Number, message: String, op_id: String, client_id: String}} */
+		/** @type {{ReturnValue: Boolean, Status: Number, Message: String, OperationId: String, UserId: String}} */
 		var responseObj = plugins.serialize.fromJSON(response.getResponseBody());
 		return responseObj;
 	}
