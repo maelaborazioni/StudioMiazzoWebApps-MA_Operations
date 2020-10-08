@@ -84,7 +84,8 @@ var OpType =
 	AmmCC : 'AmmCC',
 	AmmIU : 'AmmIU',
 	SRR : 'SRR',
-	ITCom : 'ITCom'  
+	ITCom : 'ITCom',
+	SSH : 'SSH'	
 };
 
 /**
@@ -539,7 +540,7 @@ function askForConcurrentOperations(userID, idditta, iddipendente, periodo)
 {
 	var hClient = globals.getHttpClient();
 	
-	var request = hClient.createPostRequest(WS_OPERATION + '/Operations/CheckForConcurrentOperations');
+	var request = hClient.createPostRequest(WS_OPERATION + '/Operation/CheckForConcurrentOperations');
 		request.addParameter('userid',userID.toString());
 		if(idditta)
 		   request.addParameter('idditta',idditta.toString());

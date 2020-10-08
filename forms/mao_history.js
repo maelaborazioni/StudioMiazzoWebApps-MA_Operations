@@ -288,7 +288,7 @@ function checkStatusCallback(retObj)
 function operationDone(retObj)
 {
 	// Update the file foundset, to avoid stale data
-	var fs = updateOperationStatus(retObj.operationId);
+	var fs = updateOperationStatus(retObj.status['operationId']);
 	if (fs)
 	{
 		databaseManager.refreshRecordFromDatabase(fs.operationlog_to_operationfile, 0);
